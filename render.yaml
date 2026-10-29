@@ -1,0 +1,145 @@
+envVarGroups:
+  - name: zestora-shared-secrets
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: INTERNAL_SERVICE_SECRET
+        generateValue: true
+
+services:
+  - type: web
+    name: zestora-auth-api
+    runtime: node
+    plan: free
+    rootDir: services/auth
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - fromGroup: zestora-shared-secrets
+
+  - type: web
+    name: zestora-admin-api
+    runtime: node
+    plan: free
+    rootDir: services/admin
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromService:
+          name: zestora-auth-api
+          type: web
+          envVarKey: MONGODB_URI
+      - key: DB_NAME
+        value: Zomato_Clone
+      - fromGroup: zestora-shared-secrets
+
+  - type: web
+    name: zestora-realtime-api
+    runtime: node
+    plan: free
+    rootDir: services/realtime
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RIDER_SERVICE
+        value: https://zestora-rider-api.onrender.com
+      - fromGroup: zestora-shared-secrets
+
+  - type: web
+    name: zestora-utils-api
+    runtime: node
+    plan: free
+    rootDir: services/utils
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RESTAURANT_SERVICE
+        value: https://zestora-restaurant-api.onrender.com
+      - key: RABBITMQ_URL
+        sync: false
+      - key: IMAGEKIT_PRIVATE_KEY
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - fromGroup: zestora-shared-secrets
+
+  - type: web
+    name: zestora-restaurant-api
+    runtime: node
+    plan: free
+    rootDir: services/restaurant
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromService:
+          name: zestora-auth-api
+          type: web
+          envVarKey: MONGODB_URI
+      - key: UTILS_SERVICE
+        value: https://zestora-utils-api.onrender.com
+      - key: REALTIME_SERVICE
+        value: https://zestora-realtime-api.onrender.com
+      - key: RABBITMQ_URL
+        fromService:
+          name: zestora-utils-api
+          type: web
+          envVarKey: RABBITMQ_URL
+      - key: PAYMENT_QUEUE
+        value: payment_event
+      - key: RIDER_QUEUE
+        value: rider_queue
+      - key: ORDER_READY_QUEUE
+        value: order_ready_queue
+      - fromGroup: zestora-shared-secrets
+
+  - type: web
+    name: zestora-rider-api
+    runtime: node
+    plan: free
+    rootDir: services/rider
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromService:
+          name: zestora-auth-api
+          type: web
+          envVarKey: MONGODB_URI
+      - key: UTILS_SERVICE
+        value: https://zestora-utils-api.onrender.com
+      - key: REALTIME_SERVICE
+        value: https://zestora-realtime-api.onrender.com
+      - key: RESTAURANT_SERVICE
+        value: https://zestora-restaurant-api.onrender.com
+      - key: RABBITMQ_URL
+        fromService:
+          name: zestora-utils-api
+          type: web
+          envVarKey: RABBITMQ_URL
+      - key: RIDER_QUEUE
+        value: rider_queue
+      - key: ORDER_READY_QUEUE
+        value: order_ready_queue
+      - fromGroup: zestora-shared-secrets
