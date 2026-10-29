@@ -37,12 +37,22 @@ export const addRestraunt = TryCatch(async (req, res) => {
       message: "Failed to create file buffer",
     });
   }
-  const { data: uploadResult } = await axios.post(
-    `${process.env.UTILS_SERVICE}/api/upload`,
-    {
-      buffer: fileBuffer.content,
-    },
-  );
+  let uploadResult;
+  try {
+    const { data } = await axios.post(
+      `${process.env.UTILS_SERVICE}/api/upload`,
+      {
+        buffer: fileBuffer.content,
+        fileName: file.originalname,
+      },
+    );
+    uploadResult = data;
+  } catch (error) {
+    return res.status(502).json({
+      message:
+        error.response?.data?.message || "ImageKit image upload failed.",
+    });
+  }
   const restaurant = await Restaurant.create({
     name,
     description,

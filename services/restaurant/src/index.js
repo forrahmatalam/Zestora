@@ -10,8 +10,15 @@ import cors from "cors";
 import { connectRabbitMQ } from "./config/rabbitmq.js";
 import { startPaymentConsumer } from "./config/payment.consumer.js";
 dotenv.config();
-await connectRabbitMQ();
-startPaymentConsumer();
+try {
+  await connectRabbitMQ();
+  startPaymentConsumer();
+} catch (error) {
+  console.error(
+    "RabbitMQ unavailable; payment queue features are disabled until it is available:",
+    error.message,
+  );
+}
 const app = express();
 app.use(cors());
 app.use(express.json());

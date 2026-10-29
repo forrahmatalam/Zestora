@@ -8,7 +8,7 @@ microservices. The frontend is already React-based; it does not use Next.js.
 - Node.js 22 or newer and npm
 - MongoDB and RabbitMQ reachable at the URLs in the service environment files
 - Credentials for the integrations you use, such as Google sign-in, Stripe,
-  Razorpay, and Cloudinary
+  Razorpay, and ImageKit
 
 ## Run locally
 
@@ -44,6 +44,8 @@ test/live keys go only in `services/utils/.env` (`RAZORPAY_KEY_ID` and
 `RAZORPAY_KEY_SECRET`). Get them from Razorpay Dashboard > Account & Settings >
 API Keys. Never put secret keys in `frontend/.env`. Private `.env` files are
 ignored by Git. `cp -n` leaves any `.env` file you already have untouched.
+Set `IMAGEKIT_PRIVATE_KEY` in `services/utils/.env` from ImageKit Dashboard >
+Developer > API keys.
 
 For Google sign-in, add `http://localhost:5173` to your OAuth client under
 **Google Cloud Console → APIs & Services → Credentials → Authorized
