@@ -44,6 +44,11 @@ export const adminService = serviceUrl(
   "http://localhost:5006",
   "https://zestora-admin-api.onrender.com",
 );
+
+// Wake the free Render utils instance while the user is signing in / navigating,
+// so the first image upload does not hit Render's cold-start 502.
+fetch(`${utilsService}/health`).catch(() => {});
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ""}>
