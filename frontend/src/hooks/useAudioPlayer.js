@@ -20,8 +20,6 @@ export const useAudioPlayer = (source, { preload = false } = {}) => {
     player
       .play()
       .then(() => {
-        player.pause();
-        player.currentTime = 0;
         onUnlocked();
       })
       .catch(onFailure);

@@ -37,7 +37,12 @@ const RiderDashboard = () => {
       setIncomingOrders((prev) =>
         prev.includes(orderId) ? prev : [...prev, orderId],
       );
-      if (audioUnlocked) playFromStart();
+      if (audioUnlocked) {
+        playFromStart((error) => {
+          console.error("Rider notification sound failed:", error);
+          toast.error("Notification sound failed. Tap Enable Sound again.");
+        });
+      }
       setTimeout(() => {
         setIncomingOrders((prev) => prev.filter((id) => id !== orderId));
       }, 10000);
