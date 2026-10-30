@@ -26,11 +26,16 @@ const RiderDashboard = () => {
     unlock(
       () => {
         setAudioUnlocked(true);
+        localStorage.setItem("riderSoundEnabled", "true");
         toast.success("Sound Enabled");
       },
       () => toast.error("Tap again to enable sound"),
     );
   };
+  useEffect(() => {
+    if (localStorage.getItem("riderSoundEnabled") !== "true") return;
+    unlock(() => setAudioUnlocked(true), () => setAudioUnlocked(false));
+  }, [unlock]);
   useEffect(() => {
     if (!socket) return;
     const onOrderAvailable = ({ orderId }) => {

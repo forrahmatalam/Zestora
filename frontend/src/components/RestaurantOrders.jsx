@@ -23,11 +23,16 @@ const RestaurantOrders = ({ restaurantId }) => {
     unlock(
       () => {
         setAudioUnlocked(true);
+        localStorage.setItem("restaurantSoundEnabled", "true");
         console.log("Audio unlocked");
       },
       (err) => console.log("Failed to unlock audio: ", err),
     );
   };
+  useEffect(() => {
+    if (localStorage.getItem("restaurantSoundEnabled") !== "true") return;
+    unlock(() => setAudioUnlocked(true), () => setAudioUnlocked(false));
+  }, [unlock]);
   const fetchOrders = useCallback(async () => {
     try {
       const { data } = await axios.get(
@@ -46,8 +51,9 @@ const RestaurantOrders = ({ restaurantId }) => {
     }
   }, [restaurantId]);
   useEffect(() => {
-    const timer = setTimeout(fetchOrders, 0);
-    return () => clearTimeout(timer);
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 10000);
+    return () => clearInterval(interval);
   }, [fetchOrders]);
   useEffect(() => {
     if (!socket) return;

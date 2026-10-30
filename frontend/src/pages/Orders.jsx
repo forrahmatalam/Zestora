@@ -34,8 +34,9 @@ const Orders = () => {
     }
   }, []);
   useEffect(() => {
-    const timer = setTimeout(fetchOrders, 0);
-    return () => clearTimeout(timer);
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 10000);
+    return () => clearInterval(interval);
   }, [fetchOrders]);
   useEffect(() => {
     if (!socket) return;
