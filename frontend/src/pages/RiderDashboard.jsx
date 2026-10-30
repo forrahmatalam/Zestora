@@ -124,6 +124,10 @@ const RiderDashboard = () => {
   const [image, setImage] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const handleSubmit = async () => {
+    if (!phoneNumber || !aadharNumber || !drivingLicenseNumber || !image) {
+      toast.error("Phone, Aadhar, driving license, and image are required");
+      return;
+    }
     if (!navigator.geolocation) {
       toast.error("Location Access Required");
       return;

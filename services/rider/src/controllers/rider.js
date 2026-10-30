@@ -14,24 +14,6 @@ export const addRiderProfile = TryCatch(async (req, res) => {
       message: "Only riders can create rider profile",
     });
   }
-  const file = req.file;
-  if (!file) {
-    return res.status(400).json({
-      message: "Rider Image is required",
-    });
-  }
-  const fileBuffer = getBuffer(file);
-  if (!fileBuffer?.content) {
-    return res.status(500).json({
-      message: "Failed to generate image buffer",
-    });
-  }
-  const { data: uploadResult } = await axios.post(
-    `${process.env.UTILS_SERVICE}/api/upload`,
-    {
-      buffer: fileBuffer.content,
-    },
-  );
   const {
     phoneNumber,
     aadharNumber,
@@ -50,6 +32,25 @@ export const addRiderProfile = TryCatch(async (req, res) => {
       message: "All fields are required",
     });
   }
+  const file = req.file;
+  if (!file) {
+    return res.status(400).json({
+      message: "Rider Image is required",
+    });
+  }
+  const fileBuffer = getBuffer(file);
+  if (!fileBuffer?.content) {
+    return res.status(500).json({
+      message: "Failed to generate image buffer",
+    });
+  }
+  const { data: uploadResult } = await axios.post(
+    `${process.env.UTILS_SERVICE}/api/upload`,
+    {
+      buffer: fileBuffer.content,
+      fileName: file.originalname,
+    },
+  );
   const existingProfile = await Rider.findOne({
     userId: user._id,
   });
